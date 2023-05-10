@@ -1,0 +1,222 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\title{Data Warehouse Documentation \\
+        \large Premier League Betting Odds - Analysis}
+\author{
+Szymon Matuszewski\\
+  \texttt{Politechnika Warszawska}
+  \and
+  Michał Mazuryk\\
+  \texttt{Politechnika Warszawska}
+  \and
+  Damian Skowroński\\
+  \texttt{Politechnika Warszawska}
+}
+\date{May 2023}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\subsection{Project Purpose}
+
+The purpose of this project is to construct a data warehouse model to facilitate comprehensive analysis of Premier League matches with a specific focus on betting odds.
+
+The growing popularity of football betting has created a demand for in-depth analysis and prediction models. This project aims to meet this demand by creating a data warehouse that combines data on match results, fixtures, and betting odds from multiple sources. This consolidated data platform will allow for a wide range of analyses to be conducted, such as examining the relationship between match outcomes and betting odds, identifying trends over time, and being used for predicting future match results.
+
+The data warehouse model will be based on a star schema, which will allow for efficient querying and easy understanding of the data structure. It will contain two fact tables: one for match facts and another for betting odds facts. These fact tables will be connected through several shared dimensional tables, such as teams, seasons, gameweeks, dates, time and referees.
+
+The match facts table will contain data on match results, including the home and away teams, scores, expected goals (xG), and attendance. The betting odds facts table will contain data on betting odds from one betting company Bet365. It is known to be the most famous betting company in England.
+
+By building this data warehouse, we aim to provide a robust data foundation for advanced analytics, supporting better decision-making for betting enthusiasts, football analysts, and the wider sports industry. The ultimate goal is to enhance understanding of Premier League matches and the betting landscape, contributing to more accurate predictions and insights.
+
+\subsection{User Benefits}
+
+Here we present the user benefits divided into different type of users:
+
+\begin{itemize}
+    \item \textbf{Betting Enthusiasts} - They will be able to leverage this solution to make more informed decisions on their betting strategies. The data warehouse provides a consolidated and easy-to-analyze view of match outcomes and betting odds. This could help bettors find patterns or trends that could potentially increase their chances of successful betting.
+    \item \textbf{Sports Analysts} - Analysts could use this tool to dig deeper into match statistics and betting trends, enabling them to generate more accurate predictions and insightful match previews or post-match analysis. The ability to easily analyze and compare historical data across seasons can support the development of sophisticated predictive models.
+    \item \textbf{Journalists and Bloggers} - Those who report or write about football matches could use this warehouse to quickly fetch reliable stats and facts for their articles, enriching their content and enhancing the reliability of their reporting.
+    \item \textbf{Fantasy Football Players} - Players could use the information from the data warehouse to make more informed decisions when selecting players for their fantasy teams, based on the in-depth match and player statistics.
+    \item \textbf{Betting Companies} - They can use the data warehouse to analyze their betting odds against actual match outcomes. This could help in refining their odds setting algorithms and risk management practices, leading to more profitable operations.
+    \item \textbf{Football Clubs and Organizations} - The data warehouse can serve as a valuable tool for performance analysis and opponent scouting. Clubs can analyze their own performance over time or delve into the performance of opponents to prepare for future matches.
+    \item \textbf{Sports Marketing Companies} - These companies could use the insights from the data warehouse to better understand fan behavior, market trends, and more, which can guide marketing strategies in the sports domain.
+\end{itemize}
+
+\section{Datasets}
+
+After a long consideration we decided to gather data from \textbf{three} different resources. These are respectively:
+
+\begin{enumerate}
+    \item \href{https://fbref.com/en/comps/9/schedule/Premier-League-Scores-and-Fixtures}{Scores and Fixtures} - we consider last 5 seasons and gather 5 tables (each one reffering to one season). These tables contain information about matches - their outcome, expected goals (xG), attendance and more.
+    \item \href{https://www.football-data.co.uk/englandm.php?fbclid=IwAR3lgnSwPlUJIQCXFbdD0cp4X0teNZ5uSRdO0Udx-lqAU8K9-ZFvNv5bd4c}{Betting Archives} - once again we are forced to gather 5 tables from last 5 seasons. These tables are used to create fact table \textit{BettingOdds} with historical information about the Bet365 odds.
+    \item \href{https://github.com/vaastav/Fantasy-Premier-League/tree/master/data}{Fantasy Premier League Github repository} - these datasets are created and updated by Github user \textbf{vaastav}. They are updated regularly after one gameweek. These tables are crucial for extracting the information about the opponent difficulty.
+\end{enumerate}
+
+All data is accesible in \textbf{.csv} format and being updated at least once in a gameweek.
+
+\section{Model Architecture}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{PremierLeague_diagram.png}
+\caption{Diagram of the model architecture for Premier League Betting Odds - Analysis.}
+\label{fig:diagram}
+\end{figure}
+
+\subsection{FactMatch}
+
+Fact table containing information about the particular Premier League match. This fact table refers to the measures \textit{after} the match.
+
+Columns:
+\begin{itemize}
+    \item MatchID - Primary Key
+    \item HomeTeamID - Foreign Key for Home Team reffering to the DimTeam table
+    \item AwayTeamID - Foreign Key for Away Team reffering to the DimTeam table
+    \item SeasonID - Foreign Key for season referring to the DimSeason table
+    \item GameweekID - Foreign Key for gameweek referring to the DimGameweek table
+    \item DateID - Foreign Key for date referring to the DimDate table
+    \item TimeID - Foreign Key for time referring to the DimTime table
+    \item RefereeID - Foreign Key for referee referring to the DimReferee table
+    \item StadiumName - name of the stadium the match was held
+    \item HomeScore - goals measure for the home team
+    \item AwayScore - goals measure for the away team
+    \item WinnerFlag - calculated flag describing who won the match: 0 - draw, 1 - home team, 2 - away team
+    \item HomeXGScore - expected goals measure for the home team
+    \item AwayXGScore - expected goals measure for the away team
+    \item DifficultyHomeRating - difficulty rating for home team (1 - very weak, 5 - very strong)
+    \item DifficultyAwayRating - difficulty rating for away team (1 - very weak, 5 - very strong)
+    \item AttendanceMeasure - measure for attendance at the stadium
+    \item MaxStadiumCapacityMeasure - maximum stadium capacity gathered manually
+\end{itemize}
+
+\subsection{FactBettingOdds}
+
+Fact table containing information about Bet365 betting odds for a particular match. This fact table refers to the measures \textit{before} the match.
+
+Columns:
+
+\begin{itemize}
+    \item BettingOddsID - Primary Key
+    \item HomeTeamID - Foreign Key for Home Team reffering to the DimTeam table
+    \item AwayTeamID - Foreign Key for Away Team reffering to the DimTeam table
+    \item SeasonID - Foreign Key for season referring to the DimSeason table
+    \item GameweekID - Foreign Key for gameweek referring to the DimGameweek table
+    \item DateID - Foreign Key for date referring to the DimDate table
+    \item HomeOdd - the odd for the home team at Bet365
+    \item DrawOdd - the odd for a draw at Bet365
+    \item AwayOdd - the odd for the away team at Bet365
+    \item HomePercent - calculated measure: percent for home team to be the winners
+    \item DrawPercent - calculated measure: percent for the draw
+    \item AwayPercent - calculated measure: percent for away team to be the winners
+    \item MaxHomeOdd - maximum odd for the home team from different companies
+    \item MaxDrawOdd - maximum odd for the draw from different companies
+    \item MaxAwayOdd - maximum odd for the away team from different companies
+    \item AvgHomeOdd - average odd for the home team from different companies
+    \item AvgDrawOdd - average odd for the draw from different companies
+    \item AvgAwayOdd - average odd for the away team from different companies
+    \item MoreThanTwoGoalsOdd - the odd for more than 2 goals to be scored within the match
+    \item LessThanThreeGoalsOdd - the odd for less than 3 goals to be scored within the match
+    \item MaxMoreThanTwoGoalsOdd - maximum odd for more than 2 goals to be scored within the match from different companies
+    \item AvgMoreThanTwoGoalsOdd - average odd for more than 2 goals to be scored within the match from different companies
+    \item MaxLessThanThreeGoalsOdd - maximum odd for more than 3 goals to be scored within the match from different companies
+    \item AvgLessThanThreeGoalsOdd - average odd for more than 3 goals to be scored within the match from different companies
+    \item AsianHandicapHomeOdd - the odd for the home team with asian handicap
+    \item AsianHandicapAwayOdd - the odd for the away team with asian handicap
+    \item MaxAsianHandicapHomeOdd - maximum odd for the home team with asian handicap from different companies
+    \item MaxAsianHandicapAwayOdd - maximum odd for the away team with asian handicap from different companies
+    \item AvgAsianHandicapHomeOdd - average odd for the home team with asian handicap from different companies
+    \item AvgAsianHandicapAwayOdd - average odd for the away team with asian handicap from different companies
+\end{itemize}
+
+\subsection{DimTeam}
+
+Dimensional table containing information about teams.
+
+Columns:
+
+\begin{itemize}
+    \item TeamID - PrimaryKey
+    \item TeamName - name of the team
+    \item City - origin city of the team
+\end{itemize}
+
+\subsection{DimSeason}
+
+Dimensional table containing information about seasons.
+
+Columns:
+
+\begin{itemize}
+    \item SeasonID - Primary Key
+    \item SeasonStartYear - year of the start of the season
+    \item SeasonEndYear - year of the end of the season
+\end{itemize}
+
+\subsection{DimDate}
+
+Dimensional table containing information about dates.
+
+Columns:
+
+\begin{itemize}
+    \item DateID - Primary Key
+    \item Day - day of the match
+    \item Month - month of the match
+    \item Year - year of the match
+\end{itemize}
+
+\subsection{DimGameweek}
+
+Dimensional table containing information about gameweeks.
+
+Columns:
+
+\begin{itemize}
+    \item GameweekID - Primary Key
+    \item GameweekNumber - gameweek number from 1 to 38
+\end{itemize}
+
+\subsection{DimReferee}
+
+Dimensional table containing information abour referees.
+
+Columns:
+
+\begin{itemize}
+    \item RefereeID - Primary Key
+    \item RefereeName - name of the referee
+\end{itemize}
+
+\subsection{DimTime}
+
+Dimensional table containing information about an hour the match was held.
+
+Columns:
+
+\begin{itemize}
+    \item TimeID - Primary Key
+    \item TimeHour - an hour of the time when the match was held
+    \item TimeMinutes - minutes of the time when the match was held
+\end{itemize}
+
+\section{ETL}
+
+\section{Planned Raports}
+
+\section{Planned Tests}
+
+\end{document}
