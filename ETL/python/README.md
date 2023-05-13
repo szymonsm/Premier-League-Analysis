@@ -29,4 +29,4 @@ The insert_betting_odds() function reads a CSV file containing betting odds for 
 
 The insert_fantasy_fixtures() function reads two CSV files, one containing team names and another containing football fixtures, and cleans them up. The function merges the two dataframes, renames some columns, and converts the kickoff_time column into the datetime format. Finally, it writes the processed data into the FantasyFixtures table of the SQL Server database.
 
-The main() function creates a connection to the SQL Server database, gets the file paths of the CSV files to be processed, and calls the three data processing functions for each file. The script seems to handle files for multiple seasons of the English Premier League.
+The main() function creates a connection to the SQL Server database, gets the file paths of the CSV files to be processed, and calls the three data processing functions for each file. The handles files for multiple seasons of the English Premier League.
