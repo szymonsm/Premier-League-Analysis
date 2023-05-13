@@ -88,7 +88,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimDate](
-	[DateID] [bigint] NOT NULL,
+	[DateID] [bigint] IDENTITY(1,1) NOT NULL,
 	[Day] [smallint] NOT NULL,
 	[Month] [smallint] NOT NULL,
 	[Year] [int] NOT NULL,
@@ -104,7 +104,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimGameweek](
-	[GameweekID] [bigint] NOT NULL,
+	[GameweekID] [bigint] IDENTITY(1,1) NOT NULL,
 	[GameweekNumber] [int] NOT NULL,
  CONSTRAINT [PK_DimGameweek] PRIMARY KEY CLUSTERED 
 (
@@ -118,7 +118,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimReferee](
-	[RefereeID] [bigint] NOT NULL,
+	[RefereeID] [bigint] IDENTITY(1,1) NOT NULL,
 	[RefereeName] [varchar](100) NOT NULL,
  CONSTRAINT [PK_DimReferee] PRIMARY KEY CLUSTERED 
 (
@@ -132,7 +132,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimSeason](
-	[SeasonID] [bigint] NOT NULL,
+	[SeasonID] [bigint] IDENTITY(1,1) NOT NULL,
 	[SeasonYearStart] [int] NOT NULL,
 	[SeasonYearEnd] [int] NOT NULL,
  CONSTRAINT [PK_DimSeason] PRIMARY KEY CLUSTERED 
@@ -147,7 +147,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimTeam](
-	[TeamID] [bigint] NOT NULL,
+	[TeamID] [bigint] IDENTITY(1,1) NOT NULL,
 	[TeamName] [varchar](100) NOT NULL,
 	[City] [varchar](100) NOT NULL,
  CONSTRAINT [PK_DimTeam] PRIMARY KEY CLUSTERED 
@@ -162,7 +162,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[DimTime](
-	[TimeID] [bigint] NOT NULL,
+	[TimeID] [bigint] IDENTITY(1,1) NOT NULL,
 	[TimeHour] [smallint] NOT NULL,
 	[TimeMinutes] [smallint] NOT NULL,
  CONSTRAINT [PK_DimTime] PRIMARY KEY CLUSTERED 
