@@ -6,7 +6,7 @@ The goal is to insert rows of data from CSV files (located in the Data directory
 
 * Matches - containing general information about each match. This table will be filled with rows from files following the naming pattern: *scores-fixtures-\<season years>.csv*.
 * BettingOdds - containing ~100 columns of information regarding the betting for each match. This table will be filled with rows from files following the naming pattern: *betting-odds-\<season years>.csv*.
-* FantasyFixtures - containing information regarding the strength of both teams participating in a match. This data is taken from an official Premier League game, and changes throughout the season depending on the outcomes.
+* FantasyFixtures - containing information regarding the strength of both teams participating in a match. This data is taken from an official Premier League game, and changes throughout the season depending on the outcomes. 
 
 ### How to make it work?
 Here are the steps you can follow to achieve the desired outcome:
@@ -29,4 +29,4 @@ The insert_betting_odds() function reads a CSV file containing betting odds for 
 
 The insert_fantasy_fixtures() function reads two CSV files, one containing team names and another containing football fixtures, and cleans them up. The function merges the two dataframes, renames some columns, and converts the kickoff_time column into the datetime format. Finally, it writes the processed data into the FantasyFixtures table of the SQL Server database.
 
-The main() function creates a connection to the SQL Server database, gets the file paths of the CSV files to be processed, and calls the three data processing functions for each file. The handles files for multiple seasons of the English Premier League.
+The main() function creates a connection to the SQL Server database, gets the file paths of the CSV files to be processed, and calls the three data processing functions for each file. The script handles files for multiple seasons of the English Premier League.
