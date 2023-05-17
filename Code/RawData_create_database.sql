@@ -128,7 +128,7 @@ CREATE TABLE FantasyFixtures(
 
 CREATE TABLE Matches (
     Wk INT,
-    Day VARCHAR(3),
+    [Day] VARCHAR(3),
     [Date] DATE,
     [Time] VARCHAR(50),
     Home VARCHAR(100),
@@ -140,4 +140,12 @@ CREATE TABLE Matches (
     Referee VARCHAR(100),
 	HomeScore INT,
 	AwayScore INT
+)
+
+CREATE TABLE Teams(
+	ShortName VARCHAR(3),
+	BettingOddsTeamName VARCHAR(50),
+	MatchesTeamName VARCHAR(50),
+	StadiumLocation VARCHAR(50),
+	StadiumCoordinates VARCHAR(100)
 )

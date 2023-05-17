@@ -61,6 +61,66 @@ def insert_fantasy_fixtures(season, base_dir, engine):
 
 
 
+def create_teams_dict(season_list, base_dir, engine):
+    teams_dfs = []
+    # fantasy premier league team names
+    for season in season_list:
+        teams_file_path = os.path.join(base_dir, 'Data', f'fantasy-teams-{season}.csv')
+        teams_season = pd.read_csv(teams_file_path)[["id","name","short_name"]]
+        teams_dfs.append(teams_season)
+    teams = (pd.concat(teams_dfs)[["short_name","name"]]
+             .drop_duplicates()
+             .sort_values(by = "name")
+             .reset_index(drop = True))
+    
+    # bettingodds team names
+    team_list = []
+    for season in seasons:
+        file_path = os.path.join(base_dir, 'Data', f'betting-odds-{season}.csv')
+        season_unique_teams = (pd.read_csv(file_path)
+                .HomeTeam.unique())
+        team_list.append(season_unique_teams)
+    betting_teams = pd.Series(pd.Series(np.array(team_list).flatten()).unique()).sort_values().reset_index(drop = True)
+    teams = (pd.concat([teams,betting_teams],axis=1)
+             .rename(columns = {"short_name":"ShortName", 0: "BettingOddsTeamName"}))
+    
+    # matches team names
+    team_list = []
+    for season in seasons:
+        file_path = os.path.join(base_dir, 'Data', f'scores-fixtures-{season}.csv')
+        season_unique_teams = (pd.read_csv(file_path)
+                            .Home.unique())
+        team_list.append(season_unique_teams)
+    matches_teams =  pd.Series(pd.Series(np.array(team_list).flatten()).unique()).sort_values().reset_index(drop = True)
+    teams = (pd.concat([teams,matches_teams],axis=1)
+             .rename(columns = {0:"MatchesTeamName"})
+             .drop(columns = ["name"]))
+
+    # wikipedia info
+    wiki_data = pd.read_html('https://en.wikipedia.org/wiki/List_of_Premier_League_stadiums')[0]
+    wiki_data = wiki_data.loc[wiki_data["Closed"].isna(), ["Stadium","Location","Club","Capacity","Coordinates"]] 
+    wiki_data.loc[wiki_data["Stadium"]=='Anfield',"Coordinates"] = "53°25′51″N 002°57′39″W / 53.43083°N 2.96083°W"
+    wiki_data.loc[wiki_data["Club"]=="Manchester United","Club"] = "Manchester Utd"
+    wiki_data.loc[wiki_data["Club"]=="Newcastle United","Club"] = "Newcastle Utd"
+    wiki_data.loc[wiki_data["Club"]=="Sheffield United","Club"] = "Sheffield Utd" 
+    wiki_data.loc[wiki_data["Club"]=="Brighton & Hove Albion","Club"] = "Brighton"
+    wiki_data.loc[wiki_data["Club"]=="Crystal Palace & Wimbledon","Club"] = "Crystal Palace"
+    wiki_data.loc[wiki_data["Club"]=="Tottenham Hotspur","Club"] = "Tottenham"
+    wiki_data.loc[wiki_data["Club"]=="West Ham United","Club"] = "West Ham"
+    wiki_data.loc[wiki_data["Club"]=="West Bromwich Albion","Club"] = "West Brom"
+    wiki_data.loc[wiki_data["Club"]=="Nottingham Forest","Club"] = "Nott'ham Forest"
+    wiki_data.loc[wiki_data["Club"]=="Wolverhampton Wanderers","Club"] = "Wolves"
+    wiki_data = wiki_data[["Location","Club","Coordinates"]].rename(columns = {"Coordinates":"StadiumCoordinates", "Location":"StadiumLocation"})
+
+    teams = (pd.merge(teams, wiki_data, left_on = "MatchesTeamName", right_on = "Club", how = "left")
+        .drop(columns = ["Club"])
+        .sort_values(by = "ShortName")
+        .reset_index(drop = True))
+
+    teams.to_sql('Teams', engine, if_exists='append', index=False)
+    
+    
+
 
 def main():
     server = 'DESKTOP-CBA20L1' # this is the name of your server in SQL Server Management Studio
@@ -82,7 +142,9 @@ def main():
     seasons = ["19-20", "20-21", "21-22", "22-23"]    
     for season in seasons:
         insert_fantasy_fixtures(season, base_dir, engine)
-        
+    
+    create_teams_dict(seasons, base_dir, engine)
+    
     print("Insertion complete")
     
 if __name__ == "__main__":
