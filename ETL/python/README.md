@@ -6,7 +6,7 @@ The goal is to insert rows of data from CSV files (located in the Data directory
 
 * Matches - containing general information about each match. This table will be filled with rows from files following the naming pattern: *scores-fixtures-\<season years>.csv*.
 * BettingOdds - containing ~100 columns of information regarding the betting for each match. This table will be filled with rows from files following the naming pattern: *betting-odds-\<season years>.csv*.
-* FantasyFixtures - containing information regarding the strength of both teams participating in a match. This data is taken from an official Premier League game, and changes throughout the season depending on the outcomes.
+* FantasyFixtures - containing information regarding the strength of both teams participating in a match. This data is taken from an official Premier League game, and changes throughout the season depending on the outcomes. 
 
 ### How to make it work?
 Here are the steps you can follow to achieve the desired outcome:
