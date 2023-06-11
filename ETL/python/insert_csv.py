@@ -75,7 +75,7 @@ def create_teams_dict(season_list, base_dir, engine):
     
     # bettingodds team names
     team_list = []
-    for season in seasons:
+    for season in season_list:
         file_path = os.path.join(base_dir, 'Data', f'betting-odds-{season}.csv')
         season_unique_teams = (pd.read_csv(file_path)
                 .HomeTeam.unique())
@@ -86,7 +86,7 @@ def create_teams_dict(season_list, base_dir, engine):
     
     # matches team names
     team_list = []
-    for season in seasons:
+    for season in season_list:
         file_path = os.path.join(base_dir, 'Data', f'scores-fixtures-{season}.csv')
         season_unique_teams = (pd.read_csv(file_path)
                             .Home.unique())
@@ -132,14 +132,18 @@ def main():
     base_dir = os.path.dirname(os.path.dirname(current_dir))
     
     score_fixtures_names = ["scores-fixtures-19-20.csv", "scores-fixtures-20-21.csv", "scores-fixtures-21-22.csv", "scores-fixtures-22-23.csv"]
+    # score_fixtures_names = ["scores-fixtures-23-24.csv"]      # testing
+    
     for file_name in score_fixtures_names:
         insert_scores_fixtures(file_name, base_dir, engine)
     
     betting_odds_names = ["betting-odds-19-20.csv", "betting-odds-20-21.csv", "betting-odds-21-22.csv", "betting-odds-22-23.csv"]
+    # betting_odds_names = ["betting-odds-23-24.csv"]     # testing
     for file_name in betting_odds_names:
         insert_betting_odds(file_name, base_dir, engine)
         
-    seasons = ["19-20", "20-21", "21-22", "22-23"]    
+    seasons = ["19-20", "20-21", "21-22", "22-23"]  
+    # seasons = ["23-24"] # for testing purposes, copied data from 20-21 with changed dates  
     for season in seasons:
         insert_fantasy_fixtures(season, base_dir, engine)
     
