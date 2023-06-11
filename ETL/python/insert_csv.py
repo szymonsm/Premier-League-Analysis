@@ -75,7 +75,7 @@ def create_teams_dict(season_list, base_dir, engine):
     
     # bettingodds team names
     team_list = []
-    for season in seasons:
+    for season in season_list:
         file_path = os.path.join(base_dir, 'Data', f'betting-odds-{season}.csv')
         season_unique_teams = (pd.read_csv(file_path)
                 .HomeTeam.unique())
@@ -86,7 +86,7 @@ def create_teams_dict(season_list, base_dir, engine):
     
     # matches team names
     team_list = []
-    for season in seasons:
+    for season in season_list:
         file_path = os.path.join(base_dir, 'Data', f'scores-fixtures-{season}.csv')
         season_unique_teams = (pd.read_csv(file_path)
                             .Home.unique())
